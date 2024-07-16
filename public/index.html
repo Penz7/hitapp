@@ -12,9 +12,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Hãy đánh tui</h1>
+        <input type="file" id="imageInput" accept="image/*"/> 
         <div class="images">
-            <img src="./image/anh1.png" alt="Image" id="image">
+        
+            <img src="" alt="Image" id="image" style="display: none;"> 
+            <button id="deleteButton" style="display: none;">Xóa ảnh</button>
             <img src="./image/gay.png" alt="Stick" id="stick">
         </div>
         <audio id="hitSound" src="./hitsound.mp3"></audio>

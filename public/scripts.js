@@ -50,15 +50,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     // Your existing script.js code
-    let images = ["./image/anh1.png", "./image/anh2.png", "./image/anh3.png", "./image/anh4.png", "./image/anh5.png", "./image/anh6.png", "./image/anh7.png", "./image/anh8.png"];
-    let currentImageIndex = 0;
     let hitCount = 0;
-    const maxHits = 5;
+    const maxHits = 50;
 
-    const imageElement = document.getElementById('image');
+    const imageInput = document.getElementById('imageInput');
     const stickElement = document.getElementById('stick');
     const hitSound = document.getElementById('hitSound');
     const endSound = document.getElementById('endSound');
+    const imageElement = document.getElementById('image');
+    const deleteButton = document.getElementById('deleteButton');
 
     function playSound(audioElement) {
         const clone = audioElement.cloneNode(true);
@@ -80,11 +80,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
-    function hit() {
-        if (currentImageIndex >= images.length - 1) {
-            return; // Stop further clicks after reaching the last image
+    function showImage(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imageElement.src = e.target.result;
+            imageElement.style.display = 'block';
+            deleteButton.style.display = 'block'; // Show the delete button
+            imageInput.style.display = 'none'; // Hide the input
         }
+        reader.readAsDataURL(file);
+    }
 
+    function deleteImage() {
+        imageElement.src = '';
+        imageElement.style.display = 'none';
+        deleteButton.style.display = 'none'; // Hide the delete button
+        imageInput.style.display = 'block'; // Show the input
+        imageInput.value = null; // Clear the selected file from input
+    }
+    
+
+    function hit() {
         hitCount++;
         stickElement.style.transform = 'translateX(-50%) rotate(-30deg)';
         playSound(hitSound);  // Play the hit sound
@@ -101,19 +117,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         if (hitCount >= maxHits) {
             hitCount = 0;
-            currentImageIndex++;
 
-            if (currentImageIndex >= images.length - 1) {
-                imageElement.src = images[currentImageIndex];
-                playSound(endSound);  // Play the end sound
-                setTimeout(() => {
-                    alert('Hãy dừng lại');
-                }, 100); // Slight delay to ensure the sound plays before the alert
-            } else {
-                imageElement.src = images[currentImageIndex];
-            }
+            playSound(endSound);  // Play the end sound
+            setTimeout(() => {
+                alert('Hãy dừng lại');
+            }, 100); // Slight delay to ensure the sound plays before the alert
         }
     }
 
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            showImage(file);
+        }
+    });
+
     stickElement.addEventListener('click', hit);
+    deleteButton.addEventListener('click', deleteImage);
 });
